@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Git UserLists</title>
+</head>
+<body>
+    <h1>GIT USER'S LIST</h1>
+
+    {% if user_list %}
+    <table border="2px" style="color: black;">
+        <thead>
+            <th>Git Usernames</th>
+        </thead>
+        
+        {% for user in user_list %}
+        <tr>
+            <td><a href="{% url 'repopage' user.username %}">{{ user.username }}</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>NO ACCESS RECORDS FOUND!</p>
+    {% endif %}
+
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User repolist</title>
+</head>
+<body>
+    {% if repo_list %}
+    <table>
+        <thead>
+            <th>USER REPOS</th>
+        </thead>
+        
+        {% for repo in repo_list %}
+        <tr>
+            <td>{{ repo }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>NO ACCESS RECORDS FOUND!</p>
+    {% endif %}
+</body>
+</html>

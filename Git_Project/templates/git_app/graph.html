@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+    <script>
+        window.onload = function () {
+
+        // saving the parameters 
+        var dates = {{commits|safe}};
+        var counts = {{counts|safe}};
+   
+        // initialize the graph
+        var chart = new CanvasJS.Chart("chartContainer", {
+            animationEnabled: true,
+            title:{
+                text: "Repository commits"
+            },
+            axisX:{
+                intervalType: "day",
+                valueFormatString: "DD MMM YY"
+            },
+            axisY: {
+                title: "Number of commits"
+            },
+            data: [{
+                type: "column",
+                xValueFormatString: "DD MMM",
+                color: "#F08080",
+                dataPoints: [
+                    
+                ]
+            }]
+        });
+        chart.render();
+        
+        var totalcommits = 0
+        // plotting graph for each commit
+        for (var i = 0; i < dates.length; i++) {
+                var d = dates[i].split("-");
+                var c = counts[i];
+                // dynamic data added to graph
+                chart.data[0].addTo("dataPoints", { x: new Date(d[0], d[1]-1, d[2]), y: c });
+                totalcommits = totalcommits + c;
+        } 
+        
+        document.getElementById("result").innerHTML = totalcommits;
+        }
+    </script>
+
+<body>
+    <!-- log purpose -->
+    {{commits}}
+        <br>
+    {{ counts }}
+    
+    <!-- graph will be showed here -->
+    <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+    <br>
+    <h2>Total commits :  <p id="result"></p></h2>
+    
+</body>
+</html>

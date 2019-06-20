@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>  
+    <script type="text/javascript">
+        window.onload = function () {
+        
+
+        // gathering all the parameters
+        var repos = {{repo_data|safe}};
+        var commits = {{commit_data|safe}};     
+        var counts = {{count_data|safe}};
+        
+        // initializing chart 1
+        var chart = new CanvasJS.Chart("chartContainer", {
+            animationEnabled: true,
+            title:{
+                text: "Commits per repository"
+            },
+            axisX:{
+                valueFormatString: "DD MMM YY"
+            },
+            axisY: {
+                title: "Number of commits"
+            },
+            data: [
+
+            ]
+        });
+        chart.render();
+        var totalcommits = 0;
+        var dict={};
+        // adding the data to the chart1
+        for (var i = 0; i < repos.length; i++) {
+            
+            var newSeries = {
+            type: "line",
+            xValueFormatString: "DD MMM",
+            dataPoints: [
+            ]
+            };
+
+            // add new data series for each repository
+            chart.addTo('data', newSeries);
+
+            // adding commits for each repo
+            for(var j = 0; j < commits[i].length; j++) {
+                var dat = commits[i][j];
+                var d = dat.split("-");
+                var c = counts[i][j];
+
+                if (dat in dict) 
+                    {dict[dat] = dict[dat] + counts[i];}
+                else 
+                    {dict[dat] = counts[i][j];}
+
+                // add new datapoints for each repository in proper date format
+                chart.data[i].addTo("dataPoints", { x: new Date(d[0], d[1]-1, d[2]), y: c });
+                totalcommits = totalcommits + c;
+            }
+            chart.render();
+        }
+        // console.log(dict);
+
+
+        // initialize chart 2
+        var combinedchart = new CanvasJS.Chart("chartContainer2", {
+            animationEnabled: true,
+            title:{
+                text: "Total Repository commits"
+            },
+            axisX:{
+                valueFormatString: "DD MMM YY"
+            },
+            axisY: {
+                title: "Number of commits"
+            },
+            data: [{
+                type: "column",
+                xValueFormatString: "DD MMM",
+                dataPoints: [
+
+                ]
+            }]
+        });
+        combinedchart.render();
+        // showing commit for each day
+        for(var key in dict) {
+            var d = key.split("-");
+            combinedchart.data[0].addTo("dataPoints", { x: new Date(d[0], d[1]-1, d[2]), y: dict[key] });
+        }
+        // displaying totalcommits till now
+        document.getElementById("result").innerHTML = totalcommits;
+        }
+    </script>
+
+
+<body>
+    
+    {{repo_data}}
+        <br>
+    {{ commit_data }}
+        <br>
+    {{count_data}}
+    <!-- showing graph1 -->
+    <div id="chartContainer" style="height: 370px; width: 100%;"></div> 
+    <!-- showing graph2 -->
+    <div id="chartContainer2" style="height: 370px; width: 100%;"></div>
+    <br>
+    <h1>Total commits: <p id="result"></p></h1>
+
+</body>
+</html>

@@ -13,12 +13,19 @@
         
         {% for repo in repo_list %}
         <tr>
-            <td>{{ repo }}</td>
+            <td><a href="{% url 'graphpage' username repo %}">{{ repo }}</a></td>
         </tr>
         {% endfor %}
     </table>
     {% else %}
     <p>NO ACCESS RECORDS FOUND!</p>
     {% endif %}
+    
+    
+    <br>
+    <br>
+
+    <a href="{% url 'fullgraph' username %}">List full graph</a>
+
 </body>
 </html>

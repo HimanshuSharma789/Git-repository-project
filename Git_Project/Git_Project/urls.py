@@ -22,4 +22,7 @@ urlpatterns = [
     path('', views.userpage, name='index'),
     path('admin/', admin.site.urls),
     path('user/<str:username>', views.repopage, name='repopage'),
+    path('fullgraph/<str:username>/', views.fullgraph, name='fullgraph'),
+    path('graph/<str:username>/<str:repo>', views.graphpage, name='graphpage'),
+
 ]

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
-    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-
+    <script type="text/javascript" src="{% static 'js/canvasjs.min.js' %}"></script>  
     <script>
         window.onload = function () {
 
@@ -35,21 +35,31 @@
             }]
         });
         chart.render();
-        
-        var totalcommits = 0
+
+        var dict = {};
+        var totalcommits = 0;
+        var commit_day_count = 0;
         // plotting graph for each commit
         for (var i = 0; i < dates.length; i++) {
-                var d = dates[i].split("-");
+                var dat = dates[i];
+                var d = dat.split("-");
                 var c = counts[i];
+
+                if (dat in dict) 
+                    {dict[dat] = dict[dat] + counts[i];}
+                else 
+                    {dict[dat] = counts[i];}
+                    commit_day_count = commit_day_count + 1;
                 // dynamic data added to graph
                 chart.data[0].addTo("dataPoints", { x: new Date(d[0], d[1]-1, d[2]), y: c });
                 totalcommits = totalcommits + c;
         } 
-        
-        document.getElementById("result").innerHTML = totalcommits;
+
+        document.getElementById("commit_per_day").innerHTML = totalcommits;
+        document.getElementById("commit_day_count").innerHTML = commit_day_count;
         }
     </script>
-
+</head>
 <body>
     <!-- log purpose -->
     {{commits}}
@@ -59,7 +69,8 @@
     <!-- graph will be showed here -->
     <div id="chartContainer" style="height: 370px; width: 100%;"></div>
     <br>
-    <h2>Total commits :  <p id="result"></p></h2>
-    
+    <h2>Total commits: <p id="commit_per_day"></p></h2>
+    <h2>Number of commit days : <p id="commit_day_count"></p></h2>
+   
 </body>
 </html>

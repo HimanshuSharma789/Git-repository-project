@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
-    <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>  
+    <script type="text/javascript" src="{% static 'js/canvasjs.min.js' %}"></script>  
     <script type="text/javascript">
         window.onload = function () {
         
@@ -31,6 +32,7 @@
         });
         chart.render();
         var totalcommits = 0;
+        var commit_day_count = 0;
         var dict={};
         // adding the data to the chart1
         for (var i = 0; i < repos.length; i++) {
@@ -52,10 +54,10 @@
                 var c = counts[i][j];
 
                 if (dat in dict) 
-                    {dict[dat] = dict[dat] + counts[i];}
+                    {dict[dat] = dict[dat] + counts[i][j];}
                 else 
                     {dict[dat] = counts[i][j];}
-
+                    commit_day_count = commit_day_count + 1;
                 // add new datapoints for each repository in proper date format
                 chart.data[i].addTo("dataPoints", { x: new Date(d[0], d[1]-1, d[2]), y: c });
                 totalcommits = totalcommits + c;
@@ -92,11 +94,12 @@
             combinedchart.data[0].addTo("dataPoints", { x: new Date(d[0], d[1]-1, d[2]), y: dict[key] });
         }
         // displaying totalcommits till now
-        document.getElementById("result").innerHTML = totalcommits;
+        document.getElementById("commit_per_day").innerHTML = totalcommits;
+        document.getElementById("commit_day_count").innerHTML = commit_day_count;
         }
     </script>
 
-
+</head>
 <body>
     
     {{repo_data}}
@@ -109,7 +112,20 @@
     <!-- showing graph2 -->
     <div id="chartContainer2" style="height: 370px; width: 100%;"></div>
     <br>
-    <h1>Total commits: <p id="result"></p></h1>
+    <h1>Total commits: <p id="commit_per_day"></p></h1>
+    <h1>Number of commit days : <p id="commit_day_count"></p></h1>
+
+    <form>
+        <div style="margin-bottom: 10px; display: flex; align-items: center;">
+          <label for="start">Start date:</label>
+          <input type="date" id="start" name="start" required>
+          <label for="end">Start date:</label>
+          <input type="date" id="end" name="end"required>
+        </div>
+        <div>
+          <input type="submit">
+        </div>
+      </form>
 
 </body>
 </html>

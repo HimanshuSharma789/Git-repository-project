@@ -1,28 +1,86 @@
 <!DOCTYPE html>
+{% load staticfiles %}
+
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <title>Git UserLists</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">	
+
+	<link rel="icon" type="image/png" href="images/icons/favicon.ico' %}"/>
+	<link rel="stylesheet" href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+	<link rel="stylesheet" href="{% static 'fonts/Linearicons-Free-v1.0.0/icon-font.min.css' %}">
+	<link rel="stylesheet" href="{% static 'vendor/animate/animate.css' %}">	
+	<link rel="stylesheet" href="{% static 'vendor/css-hamburgers/hamburgers.min.css' %}">
+	<link rel="stylesheet" href="{% static 'vendor/animsition/css/animsition.min.css' %}">
+	<link rel="stylesheet" href="{% static 'vendor/select2/select2.min.css' %}">	
+	<link rel="stylesheet" href="{% static 'vendor/daterangepicker/daterangepicker.css' %}">
+	<link rel="stylesheet" href="{% static 'css/util.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    
+
 </head>
+
 <body>
-    <h1>GIT USER'S LIST</h1>
 
-    {% if user_list %}
-    <table border="2px" style="color: black;">
-        <thead>
-            <th>Git Usernames</th>
-        </thead>
-        
-        {% for user in user_list %}
-        <tr>
-            <td><a href="{% url 'repopage' user.username %}">{{ user.username }}</a></td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% else %}
-    <p>NO ACCESS RECORDS FOUND!</p>
-    {% endif %}
+    <div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100 p-b-160 p-t-50">
+				<img class= "image" src="{% static 'images/icons/GitHub_Logo_White.png' %}">
+
+				<form class="login100-form validate-form" method="post" onsubmit="formSubmit()">
+					<span class="login100-form-title p-b-43">
+						repo checker
+                    </span>
+                    {% csrf_token %}
+					<div class="wrap-input100 rs2 validate-input" data-validate = "Username is required">
+                        <input class="input100" type="text" name="username" list="users" id="userID" autocomplete="off">
+                        <span class="label-input100">Username</span>
+                        <datalist id="users">
+                            {% if user_list %}    
+                                {% for user in user_list %}
+                                    <option value="{{ user.username }}">
+                                {% endfor %}
+                            {% endif %}
+                        </datalist>
+					</div>
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn" >
+							Check repo >>
+						</button>
+					</div>
+                </form>
+
+                <div style="align-items: center; display: flex;justify-content: center;">
+                        <a href="{% url 'userlistpage' %}"><b style="font-size: larger; color: black">User lists >></b></a>
+                    </div>
+            </div>
+		</div>
+	</div>
 
 
+    <script src="{% static 'vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'vendor/animsition/js/animsition.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/popper.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'vendor/select2/select2.min.js' %}"></script>
+    <script src="{% static 'vendor/daterangepicker/moment.min.js' %}"></script>
+    <script src="{% static 'vendor/daterangepicker/daterangepicker.js' %}"></script>
+    <script src="{% static 'vendor/countdowntime/countdowntime.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+
+
+    <script>
+            function formSubmit() {
+                var nameValue = document.getElementById("userID").value;
+                console.log(nameValue);
+                uurl = "{% url 'repopage' username=0 %}".replace('0', nameValue);
+                document.write(" ");
+                window.location = uurl;
+            }
+    </script>
 </body>
 </html>

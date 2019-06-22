@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from git_app.models import UserName
+from git_app.forms import AddUserForm
 import json
 import requests
 # Create your views here.
@@ -7,10 +8,34 @@ import requests
 
 # page  which shows all the username from the database
 def userpage(request):
+    
+    # form = AddUserForm()
+    
+    # # adding form handler+
+    # if request.method == "POST": 
+    #     form = AddUserForm(request.POST)
+
+    #     if form.is_valid():
+    #         form.save(commit=True)
+    #         return userpage(request)
+    #     else:
+    #         print("ERROR ! FORM INVALID")
+
     user_list = UserName.objects.all()
-    user_dict = {'user_list':user_list}
-    print(user_dict)
-    return render(request, 'git_app/users.html', user_dict)
+    print(user_list)
+    
+    data_dict = {'user_list':user_list}
+    # data_dict = {'user_list':user_list, 'form':form}
+
+    return render(request, 'git_app/users.html', data_dict)
+
+
+def userlistpage(request):
+    user_list = UserName.objects.all()
+    print(user_list)
+    data_dict = {'user_list':user_list}
+    return render(request, 'git_app/userlist.html', data_dict)
+
 
 
 # page which shows all the repository of the user

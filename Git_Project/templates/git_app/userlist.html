@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    {% if user_list %}
+    <table>
+        <thead>
+            <th>USER LIST</th>
+        </thead>
+        
+        {% for user in user_list %}
+        <tr>
+            <td><a href="{% url 'repopage' user.username %}">{{ user.username }}</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>NO ACCESS RECORDS FOUND!</p>
+    {% endif %}
+    
+</body>
+</html>

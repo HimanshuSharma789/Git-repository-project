@@ -5,14 +5,27 @@
     <meta charset="UTF-8">
     <title>Document</title>
     <script type="text/javascript" src="{% static 'js/canvasjs.min.js' %}"></script>  
+    <script>
+        function giveDate(){
+        var today = new Date();
+        // console.log("hello");
+        today = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
+        document.getElementById("end").value = today;
+    }
+    </script>
     <script type="text/javascript">
-        window.onload = function () {
-        
-
+        // window.onload = function () {
+     
+        function makeSearch() {
         // gathering all the parameters
         var repos = {{repo_data|safe}};
         var commits = {{commit_data|safe}};     
         var counts = {{count_data|safe}};
+
+        var startDate = document.getElementById("start").value;
+        var endDate = document.getElementById("end").value;
+        console.log(startDate);
+        console.log(endDate);
         
         // initializing chart 1
         var chart = new CanvasJS.Chart("chartContainer", {
@@ -38,6 +51,8 @@
         for (var i = 0; i < repos.length; i++) {
             
             var newSeries = {
+            name: repos[i], 
+            showInLegend: true,
             type: "line",
             xValueFormatString: "DD MMM",
             dataPoints: [
@@ -50,6 +65,8 @@
             // adding commits for each repo
             for(var j = 0; j < commits[i].length; j++) {
                 var dat = commits[i][j];
+                if (dat >= startDate && dat <= endDate )
+                { 
                 var d = dat.split("-");
                 var c = counts[i][j];
 
@@ -61,6 +78,7 @@
                 // add new datapoints for each repository in proper date format
                 chart.data[i].addTo("dataPoints", { x: new Date(d[0], d[1]-1, d[2]), y: c });
                 totalcommits = totalcommits + c;
+                }
             }
             chart.render();
         }
@@ -96,17 +114,38 @@
         // displaying totalcommits till now
         document.getElementById("commit_per_day").innerHTML = totalcommits;
         document.getElementById("commit_day_count").innerHTML = commit_day_count;
+        return false;
         }
     </script>
 
 </head>
-<body>
+
+<body onload="giveDate()">
     
     {{repo_data}}
         <br>
     {{ commit_data }}
         <br>
     {{count_data}}
+    
+    <br><br>
+    
+    <form onsubmit="return makeSearch()">
+            <div style="margin-bottom: 10px; display: flex; align-items: center;">
+              <label for="start">Start date:</label>
+              
+              <input type="date" id="start" name="start" required>
+              <label for="end">End date:</label>
+              <input type="date" id="end" name="end" required>
+            </div>
+            <div>
+              <input type="submit">
+            </div>
+          </form>
+        
+    
+    
+    
     <!-- showing graph1 -->
     <div id="chartContainer" style="height: 370px; width: 100%;"></div> 
     <!-- showing graph2 -->
@@ -115,17 +154,6 @@
     <h1>Total commits: <p id="commit_per_day"></p></h1>
     <h1>Number of commit days : <p id="commit_day_count"></p></h1>
 
-    <form>
-        <div style="margin-bottom: 10px; display: flex; align-items: center;">
-          <label for="start">Start date:</label>
-          <input type="date" id="start" name="start" required>
-          <label for="end">Start date:</label>
-          <input type="date" id="end" name="end"required>
-        </div>
-        <div>
-          <input type="submit">
-        </div>
-      </form>
-
+      
 </body>
 </html>

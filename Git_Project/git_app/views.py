@@ -85,10 +85,11 @@ def graphpage(request, username=None, repo=None):
     # sending commit-date along with number of commits on each date
     graph_dict = {'commits':json.dumps(commits), 'counts':json.dumps(counts)}
     return render(request, 'git_app/graph.html', graph_dict)
+    
 
 
 # doing same process as GRAPHPAGE but for all repository
-def fullgraph(request, username=None, repo_list=None):
+def fullgraph(request, username=None):
     r = requests.get('https://api.github.com/users/'+username+'/repos')
 
     if r.status_code == 404:
@@ -129,5 +130,5 @@ def fullgraph(request, username=None, repo_list=None):
             
         print(repos, commit_data,end='\n\n')
         
-        graph = {'repo_data':json.dumps(repos), "commit_data":json.dumps(commit_data), "count_data":json.dumps(count_data)}
-        return render(request, 'git_app/full_graph.html', graph)
+        graph = {'username':username,'repo_data':json.dumps(repos), "commit_data":json.dumps(commit_data), "count_data":json.dumps(count_data)}
+        return render(request, 'git_app/full_graph2.html', graph)

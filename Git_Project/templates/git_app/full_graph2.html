@@ -1,0 +1,289 @@
+	<!DOCTYPE html>
+	{% load staticfiles %}
+	<html lang="zxx" class="no-js">
+	<head>
+		<!-- Mobile Specific Meta -->
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<!-- Favicon-->
+		<link rel="shortcut icon" href="img/fav.png">
+		<!-- Author Meta -->
+		<meta name="author" content="codepixer">
+		<!-- Meta Description -->
+		<meta name="description" content="">
+		<!-- Meta Keyword -->
+		<meta name="keywords" content="">
+		<!-- meta character set -->
+		<meta charset="UTF-8">
+		<!-- Site Title -->
+		<title>Repo Graph</title>
+		<script type="text/javascript" src="{% static 'js/canvasjs.min.js' %}"></script>  
+
+		
+		<script>
+		 	window.onload = function () {
+				console.log("nooooo")
+				var today = new Date();
+				// console.log("hello");
+				today = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
+				document.getElementById("end").value = today;
+
+			}
+		</script>
+		<script>
+
+			
+			function makeSearch() {
+
+				var repos = {{repo_data|safe}};
+				var commits = {{commit_data|safe}};     
+				var counts = {{count_data|safe}};
+	
+				var startDate = document.getElementById("start").value;
+				var endDate = document.getElementById("end").value;
+
+				var totalcommits = 0;
+        		var commit_day_count = 0;
+				var dict={};
+
+				var newSeries = [];
+				for (let i = 0; i < repos.length; i++) {
+
+					dp = [];
+
+					for(var j = 0; j < commits[i].length; j++) {
+						var commit_date = commits[i][j];
+						if (commit_date >= startDate && commit_date <= endDate )
+						{ 
+							var date = commit_date.split("-");
+							var commit_count = counts[i][j];
+
+							if (commit_date in dict) 
+								{dict[commit_date] = dict[commit_date] + counts[i][j];}
+							else 
+								{dict[commit_date] = counts[i][j];}
+								commit_day_count = commit_day_count + 1;
+							// add new datapoints for each repository in proper date format
+							// chart.data[i].addTo("dataPoints", { x: new Date(d[0], d[1]-1, d[2]), y: commit_count });
+
+							dp.push({ x: new Date(date[0], date[1]-1, date[2]), y: commit_count});
+							totalcommits = totalcommits + commit_count;
+						}
+					}
+					var seriesData = {
+						name: repos[i], 
+						showInLegend: true,
+						type: "line",
+						xValueFormatString: "DD MMM",
+						dataPoints: dp
+					};
+					newSeries.push(seriesData);
+
+				}
+
+				
+				var chart = new CanvasJS.Chart("chartContainer1", {
+					animationEnabled: true,
+					animationDuration: 4000,  
+					backgroundColor: "#f9f9ff",
+					theme: "light1",
+					title:{
+						text: "Commits per repository"
+					},
+					axisY:{
+						includeZero: false
+					},
+					data: newSeries
+					
+				});
+				chart.render();
+
+
+				// chart 2
+				var chart2_data = [];
+				for(var key in dict) {
+					var date = key.split("-");
+					chart2_data.push({x: new Date(date[0], date[1]-1, date[2]), y: dict[key] });
+				}
+
+				var chart2 = new CanvasJS.Chart("chartContainer2", {
+					animationEnabled: true,
+					animationDuration: 4000,  
+					theme: "light1",
+					backgroundColor: "#f9f9ff",
+					title:{
+						text: "Commits per days"
+					},
+					axisX:{
+						valueFormatString: "DD MMM YY"
+					},
+					axisY: {
+						title: "Number of commits"
+					},
+					data: [{        
+						type: "column",       
+						dataPoints: chart2_data
+					}]
+				});
+				chart2.render();
+				
+
+				document.getElementById("total_commits").innerHTML = totalcommits;
+        		document.getElementById("days_commited").innerHTML = commit_day_count;
+
+
+				return false;
+			}
+		</script>
+
+
+
+
+		<link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet"> 
+			<!--
+			CSS
+			============================================= -->
+			<link rel="stylesheet" href="{% static 'css/linearicons.css' %}">	
+			<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+			<link rel="stylesheet" href="{% static 'css/maingraph.css' %}">
+		</head>
+		<body>
+
+			 
+
+			<!-- start banner Area -->
+			<section class="banner-area relative" id="home">	
+				<div class="overlay overlay-bg"></div>
+				<div class="container">
+					<div class="row fullscreen d-flex align-items-center justify-content-center">
+						<div class="banner-content col-lg-12">
+							<h1 class="text-white">
+								<span>Dashboard:</span> User git commits
+							</h1>	
+							<form action="#down" class="serach-form-area" method="POST" onsubmit="return makeSearch();">
+									{% csrf_token %}
+								<div class="row justify-content-center form-wrap">
+									<div class="col-lg-1" style="margin-top: 10px;">
+										<h5>Start</h5>
+									</div>
+									<div class="col-lg-3 form-cols">
+										<input type="date" id="start" class="form-control" name="search">
+									</div>
+									<div class="col-lg-1" style="margin-top: 10px;">
+										<h5>End</h5>
+									</div>
+									<div class="col-lg-3 form-cols">
+										<input type="date" id="end" class="form-control" name="search">
+									</div>
+									<div class="col-lg-2 form-cols">
+									    <button type="submit" class="btn btn-info">
+									      <span class="lnr lnr-magnifier"></span> Search
+									    </button>
+									</div>								
+								</div>
+							</form>	
+							<p class="text-white"> <span>Instruction: </span> Select start and end date for result</p>
+						</div>											
+					</div>
+				</div>
+			</section>
+			<!-- End banner Area -->	
+
+			<!-- Start features Area -->
+			<a name="down"></a>
+			<section class="features-area">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-6 col-md-6">
+							<div class="single-feature">
+								<h4>Total Commits</h4>
+								<p>
+									<h4 style="font-size:100px" id="total_commits">?</h4>
+								</p>
+							</div>
+						</div>
+						<div class="col-lg-6 col-md-6">
+							<div class="single-feature">
+								<h4>Days commited</h4>
+								<p>
+									<h4 style="font-size:100px" id="days_commited">?</h4>
+								</p>
+							</div>
+						</div>																
+					</div>
+				</div>	
+			</section>
+			<!-- End features Area -->
+			
+			
+			<!-- Start feature-cat Area -->
+			<section class="feature-cat-area pt-100" id="category">
+				<div class="container">
+					<div class="row d-flex justify-content-center">
+						<div class="menu-content pb-60 col-lg-10">
+							<div class="title text-center">
+								<h1 class="mb-10">Repo Statistics</h1>
+								<hr>
+								<p>Analyse every aspect of github repository</p>
+							</div>
+						</div>
+					</div>						
+				</div>	
+			</section>
+			<!-- End feature-cat Area -->
+			
+			<!-- Start post Area -->
+			<section class="post-area section-gap">
+				<div class="container">
+					<div class="row justify-content-center d-flex">
+						<div class="col-lg-12 post-list">
+							
+							<div class="single-post d-flex flex-row ">
+								<div id="chartContainer1" style="height: 370px; width: 100%;"></div>
+							</div>
+							
+							<div class="single-post d-flex flex-row">
+								<div id="chartContainer2" style="height: 370px; width: 100%;"></div>
+							</div>															
+						
+						</div>
+					</div>
+				</div>	
+			</section>
+			<!-- End post Area -->
+				
+			
+			<!-- Start callto-action Area -->
+			<section class="callto-action-area section-gap" id="join">
+				<div class="container">
+					<div class="row d-flex justify-content-center">
+						<div class="menu-content col-lg-9">
+							<div class="title text-center">
+								<h1 class="mb-10">Statistical analysis of user github repo</h1>
+								<p style="color: #7b7b7b;">Review your github activity and keep it upto date... </p>
+								<a class="primary-btn" href="https://github.com/{{username}}" target="_blank">MOVE TO GITHUB REPO</a>
+								<!-- <a class="primary-btn" href="#">Request Free Demo</a> -->
+							</div>
+						</div>
+					</div>	
+				</div>	
+			</section>
+			<!-- End calto-action Area -->
+
+			
+		
+			<!-- start footer Area -->		
+			<footer class="footer-area">
+				<div class="container">
+					<div class="row">					
+					</div>
+				</div>
+			</footer>
+			<!-- End footer Area -->		
+
+			<script src="{% static 'js/jquery-2.2.4.min.js' %}"></script>
+			<script src="{% static 'js/maingraph.js' %}"></script>	
+		</body>
+	</html>
+
+
+

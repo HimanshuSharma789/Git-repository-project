@@ -77,7 +77,7 @@
             function formSubmit() {
                 var nameValue = document.getElementById("userID").value;
                 console.log(nameValue);
-                uurl = "{% url 'repopage' username=0 %}".replace('0', nameValue);
+                uurl = "{% url 'new_repopage' username=0 %}".replace('0', nameValue);
                 document.write(" ");
                 window.location = uurl;
             }

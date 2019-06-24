@@ -15,7 +15,7 @@
         
         {% for user in user_list %}
         <tr>
-            <td><a href="{% url 'repopage' user.username %}">{{ user.username }}</a></td>
+            <td><a href="{% url 'new_repopage' user.username %}">{{ user.username }}</a></td>
         </tr>
         {% endfor %}
     </table>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+	<title>HOME</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" type="text/css" href="{% static 'css/util.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+
+</head>
+<body>
+	
+	<div class="limiter">
+		<div class="container-login100" style="background: url('{% static "images/bg-01.jpg" %}')">
+			<div class="wrap-login100">
+				<form class="login100-form validate-form" method="post" onsubmit="formSubmit()">
+					<span class="login100-form-logo">
+						<img src="{% static 'images/icons/github-black.png' %}" class="zmdi">
+					</span>
+
+					<span class="login100-form-title p-b-34 p-t-27">
+						Repo Checker
+					</span>
+					{% csrf_token %}
+					<div class="wrap-input100 validate-input" data-validate = "Enter username">
+						<input class="input100" type="text" name="username" list="users" placeholder="Username" style="text-align: center;" id="userID" autocomplete="off" required>
+						<span class="focus-input100" ></span>
+						<datalist id="users">
+							{% if user_list %}    
+								{% for user in user_list %}
+									<option value="{{ user.username }}">
+								{% endfor %}
+							{% endif %}
+						</datalist>
+					</div>
+
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn">
+							Check
+						</button>
+					</div>
+
+					<div class="text-center p-t-60">
+						<a href="{% url 'userlistpage' %}" class="txt1">
+							>>> User List >>>
+						</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+
+	<div id="dropDownSelect1"></div>
+	
+
+	<script>
+		function formSubmit() {
+			var nameValue = document.getElementById("userID").value;
+			console.log(nameValue);
+			uurl = "{% url 'new_repopage' username=0 %}".replace('0', nameValue);
+			document.write(" ");
+			window.location = uurl;
+		}
+	</script>
+
+</body>
+</html>

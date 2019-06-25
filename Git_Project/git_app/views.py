@@ -3,6 +3,8 @@ from git_app.models import UserName
 from git_app.forms import AddUserForm
 import json
 import requests
+from threading import Thread
+from django.views.generic import TemplateView
 # Create your views here.
 
 
@@ -27,7 +29,7 @@ def userpage(request):
     data_dict = {'user_list':user_list}
     # data_dict = {'user_list':user_list, 'form':form}
 
-    return render(request, 'git_app/users.html', data_dict)
+    return render(request, 'git_app/index.html', data_dict)
 
 
 def userlistpage(request):
@@ -35,8 +37,6 @@ def userlistpage(request):
     print(user_list)
     data_dict = {'user_list':user_list}
     return render(request, 'git_app/userlist.html', data_dict)
-
-
 
 # page which shows all the repository of the user
 def repopage(request, username=None):
@@ -134,51 +134,66 @@ def fullgraph(request, username=None):
         return render(request, 'git_app/full_graph2.html', graph)
 
 
+class new_repopage(TemplateView):
+    commit_data = []
+    count_data = []
 
+    def commiter(self, repo):
+        
+        commits=[]
+        counts = []
 
-def new_repopage(request, username=None):
-    # return render(request, 'git_app/new_repograph.html')
-    r = requests.get('https://api.github.com/users/'+username+'/repos')
+        r = requests.get('https://api.github.com/repos/'+self.username+'/'+repo+'/commits')
+        commits_json = json.loads(r.text)
+        count=0
+        if 'message' not in commits_json:
+            for i in commits_json:
+                datetime = i['commit']['committer']['date']
+                date = datetime[:-1].split('T')[0]
+                if not commits:
+                    commits.append(date)
+                    count+=1
+                elif commits[-1] == date:
+                    count+=1
+                else:
+                    commits.append(date)
+                    counts.append(count)
+                    count=1
+            counts.append(count)
 
-    if r.status_code == 404:
-        print("No such user")
-    else:
-        repos_json = json.loads(r.text)
-        repos = []
-        for i in repos_json:
-            if i['fork'] == False:
-                repos.append(i['name'])
+        self.commit_data.append(commits)
+        self.count_data.append(counts)
 
-        commit_data = []
-        count_data = []
-        for repo in repos:
-            commits=[]
-            counts = []
+        print(commits, counts)
 
-            r = requests.get('https://api.github.com/repos/'+username+'/'+repo+'/commits')
-            commits_json = json.loads(r.text)
-            count=0
-            if 'message' not in commits_json:
-                for i in commits_json:
-                    datetime = i['commit']['committer']['date']
-                    date = datetime[:-1].split('T')[0]
-                    if not commits:
-                        commits.append(date)
-                        count+=1
-                    elif commits[-1] == date:
-                        count+=1
-                    else:
-                        commits.append(date)
-                        counts.append(count)
-                        count=1
-                counts.append(count)
+    # def new_repopage(request, username=None):
+    def get(self, request, username=None):
+        self.username = username
+        r = requests.get('https://api.github.com/users/'+self.username+'/repos')
 
-            commit_data.append(commits)
-            count_data.append(counts)
+        if r.status_code == 404:   
+            print("No such user")
+            return render(request, 'git_app/error-404.html')
+        else:
+            repos_json = json.loads(r.text)
+            repos = []
             
-        print(repos, commit_data,end='\n\n')
-        
-        graph = {'username':username,'repo_data': repos, "commit_data":json.dumps(commit_data), "count_data":json.dumps(count_data)}
-        return render(request, 'git_app/new_repograph.html', graph)
-        
+            for i, j in enumerate(repos_json):
+                if i==0:
+                    avatar_url = j['owner']['avatar_url']
+                if j['fork'] == False:
+                    repos.append(j['name'])
+
+            repo_thead = []
+            for repo in repos:
+                repo_thead.append(Thread(target=self.commiter, args=(repo,)))
+                repo_thead[-1].start()
+
+            for thread in repo_thead:
+                thread.join()
+                
+            graph = {'username':self.username,'avatar_url':avatar_url ,'repo_data': repos, "commit_data":json.dumps(self.commit_data), "count_data":json.dumps(self.count_data)}
+            # print(graph)
+            return render(request, 'git_app/new_repograph.html', graph)
+            
 

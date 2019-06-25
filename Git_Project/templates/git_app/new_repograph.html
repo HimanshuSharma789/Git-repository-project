@@ -6,7 +6,7 @@
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Purple Admin</title>
+  <title>Repositories</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="{% static 'css/materialdesignicons.min.css' %}">
  
@@ -22,29 +22,30 @@
           <li class="nav-item nav-profile">
             <a href="#" class="nav-link">
               <div class="nav-profile-image">
-                <img src="{% static 'images/face1.jpg' %}" alt="profile">
+                <img src="{{ avatar_url }}" alt="profile">
                 <span class="login-status online"></span> <!--change to offline or busy as needed-->              
               </div>
               <div class="nav-profile-text d-flex flex-column">
                 <span class="font-weight-bold mb-2">{{username}}</span>
                 
               </div>
-              <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
+              <!-- <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i> -->
             </a>
             <li><hr></li>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" id="dashboard" onclick="show_dashboard()">
+          <li class="nav-item" style="background: #bfb9b796;">
+            <a class="nav-link" id="dashboard" href="javascript:void(0)" onclick="show_dashboard()">
               <span class="menu-title">Dashboard</span>
-              <i class="mdi mdi-home menu-icon"></i>
+			  <img src="{% static 'images/dashboard/dashboard.png' %}" class="mdi menu-icon" style="margin-left: auto">
             </a>
 		  </li>
 		    {% if repo_data %}    
 				{% for repo in repo_data %}
 				<li class="nav-item">
-					<a class="nav-link" id="{{ forloop.counter0 }}" href="" onclick="simulate(this.id)" >
+					<a class="nav-link" id="{{ forloop.counter0 }}" href="javascript:void(0)" onclick="simulate(this.id)" >
 						<span class="menu-title">{{ repo }}</span>
-						<i class="mdi mdi-contacts menu-icon"></i>
+						<!-- <i class="mdi mdi-contacts menu-icon"></i> -->
+						<img src="{% static 'images/dashboard/arrow.png' %}" class="mdi menu-icon" style="margin-left: auto">
 					</a>
 				</li>
 				{% endfor %}
@@ -63,20 +64,19 @@
           <div class="page-header">
             <h3 class="page-title">
               <span class="page-title-icon bg-gradient-primary text-white mr-2">
-				<!-- <i class="mdi mdi-home"></i> -->
-				<img src="{% static 'images/dashboard/home.png' %}">
+				<img src="{% static 'images/dashboard/home.png' %}" class="mdi" style="padding-top: 10px;">
 			</span>
 			HI USER
             </h3>
           </div>
           
-          <div class="row">
+          <div class="row" style="margin-top: 50px;">
             <div class="col-md-4  grid-margin">
               <div class="card bg-gradient-danger card-img-holder text-white">
                 <div class="card-body">
                   <img src="{% static 'images/dashboard/circle.svg' %}" class="card-img-absolute" alt="circle-image"/>
                   <h4 class="font-weight-normal mb-3">Total Commits
-                    <i class="mdi mdi-chart-line mdi-24px float-right"></i>
+                    <img src="{% static 'images/dashboard/timeline.png' %}" class="mdi mdi-24px float-right">
                   </h4>
                   <h2 class="mb-5" id="total_commits"></h2>
                 </div>
@@ -86,7 +86,7 @@
                   <div class="card-body">
                     <img src="{% static 'images/dashboard/circle.svg' %}" class="card-img-absolute" alt="circle-image"/>                  
                     <h4 class="font-weight-normal mb-3">Days Commited
-                      <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
+                      <img src="{% static 'images/dashboard/today.png' %}" class="mdi mdi-24px float-right">
                     </h4>
                     <h2 class="mb-5" id="days_commited"></h2>
                   </div>
@@ -110,14 +110,6 @@
            
           </div>
           
-        <!-- content-wrapper ends -->
-        <!-- partial:partials/_footer.html -->
-        <!-- <footer class="footer">
-          <div class="d-sm-flex justify-content-center justify-content-sm-between">
-            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2019 <a href="https://www.github.com/HimanshuSharma789/" target="_blank">NerdGeek404</a>. All rights reserved.</span>
-            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="mdi mdi-heart text-danger"></i></span>
-          </div>
-        </footer> -->
         <!-- partial -->
       </div>
       <!-- main-panel ends -->
@@ -136,6 +128,9 @@
 		var repos = {{repo_data|safe}};
 		var commits = {{commit_data|safe}};     
 		var counts = {{count_data|safe}};
+
+		
+
 		console.log(commits);
 
 		var totalcommits = 0;
@@ -175,7 +170,7 @@
 
 		var chart = new CanvasJS.Chart("chartContainer1", {
 			animationEnabled: true,
-			animationDuration: 4000,  
+			animationDuration: 2000,  
 			backgroundColor: "#ffffff",
 			theme: "light1",
 			title:{
@@ -228,7 +223,7 @@
 				{dict.push(commit_date);}
 			else 
 				{commit_day_count = commit_day_count + 1;}
-
+			console.log(commit_count);
 			dp.push({ x: new Date(date[0], date[1]-1, date[2]), y: commit_count});
 			totalcommits = totalcommits + commit_count;
 		}
@@ -236,7 +231,7 @@
 	
 		var chart = new CanvasJS.Chart("chartContainer1", {
 			animationEnabled: true,
-			animationDuration: 4000,  
+			animationDuration: 2000,  
 			backgroundColor: "#ffffff",
 			theme: "light1",
 			// title:{
@@ -266,7 +261,13 @@
 
 	}
 </script>
-
+<!-- 
+<script>
+	sessionStorage.setItem('username', "{{username}}");
+	sessionStorage.setItem('repo_data', "{{repo_data | safe}}");
+	sessionStorage.setItem('commit_data', "{{commit_data | safe}}");
+	sessionStorage.setItem('count_data', "{{count_data | safe}}");
+</script> -->
   
   <!-- End custom js for this page-->
 </body>

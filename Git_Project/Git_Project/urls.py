@@ -24,7 +24,7 @@ urlpatterns = [
     path('user/<str:username>', views.repopage, name='repopage'),
     path('user_graph/<str:username>', views.new_repopage.as_view(), name='new_repopage'),
     path('userlist/', views.userlistpage, name='userlistpage'),
-    path('fullgraph/<str:username>/', views.fullgraph, name='fullgraph'),
+    path('fullgraph/', views.fullgraph.as_view(), name='fullgraph'),
     path('graph/<str:username>/<str:repo>', views.graphpage, name='graphpage'),
 
 ]

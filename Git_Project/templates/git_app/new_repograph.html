@@ -53,7 +53,7 @@
           <li class="nav-item sidebar-actions">
 			  <hr>
             <span class="nav-link"> 
-				<a href="{% url 'fullgraph' username %}" class="btn btn-block btn-lg btn-gradient-primary mt-4">Detailed Statistics</a>
+				<a href="{% url 'fullgraph' %}" class="btn btn-block btn-lg btn-gradient-primary mt-4">Detailed Statistics</a>
             </span>
           </li>
         </ul>
@@ -128,7 +128,11 @@
 		var repos = {{repo_data|safe}};
 		var commits = {{commit_data|safe}};     
 		var counts = {{count_data|safe}};
-
+		
+		sessionStorage.setItem('username', "{{username}}");
+		sessionStorage.setItem('repo_data', JSON.stringify({{repo_data | safe}}));
+		sessionStorage.setItem('commit_data', JSON.stringify({{commit_data | safe}}));
+		sessionStorage.setItem('count_data', JSON.stringify({{count_data | safe}}));
 		
 
 		console.log(commits);
@@ -261,15 +265,6 @@
 
 	}
 </script>
-<!-- 
-<script>
-	sessionStorage.setItem('username', "{{username}}");
-	sessionStorage.setItem('repo_data', "{{repo_data | safe}}");
-	sessionStorage.setItem('commit_data', "{{commit_data | safe}}");
-	sessionStorage.setItem('count_data', "{{count_data | safe}}");
-</script> -->
-  
-  <!-- End custom js for this page-->
 </body>
 
 </html>

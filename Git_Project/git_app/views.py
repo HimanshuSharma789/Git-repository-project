@@ -89,61 +89,64 @@ def graphpage(request, username=None, repo=None):
 
 
 # doing same process as GRAPHPAGE but for all repository
-def fullgraph(request, username=None):
-    r = requests.get('https://api.github.com/users/'+username+'/repos')
+class fullgraph(TemplateView):
+    def get(self,request):
+        return render(request, 'git_app/full_graph2.html')
+    # r = requests.get('https://api.github.com/users/'+username+'/repos')
 
-    if r.status_code == 404:
-        print("No such user")
-    else:
-        repos_json = json.loads(r.text)
-        repos = []
-        for i in repos_json:
-            if i['fork'] == False:
-                repos.append(i['name'])
+    # if r.status_code == 404:
+    #     print("No such user")
+    # else:
+    #     repos_json = json.loads(r.text)
+    #     repos = []
+    #     for i in repos_json:
+    #         if i['fork'] == False:
+    #             repos.append(i['name'])
 
-        commit_data = []
-        count_data = []
-        for repo in repos:
-            commits=[]
-            counts = []
+    #     commit_data = []
+    #     count_data = []
+    #     for repo in repos:
+    #         commits=[]
+    #         counts = []
 
-            r = requests.get('https://api.github.com/repos/'+username+'/'+repo+'/commits')
-            commits_json = json.loads(r.text)
-            count=0
-            if 'message' not in commits_json:
-                for i in commits_json:
-                    datetime = i['commit']['committer']['date']
-                    date = datetime[:-1].split('T')[0]
-                    if not commits:
-                        commits.append(date)
-                        count+=1
-                    elif commits[-1] == date:
-                        count+=1
-                    else:
-                        commits.append(date)
-                        counts.append(count)
-                        count=1
-                counts.append(count)
+    #         r = requests.get('https://api.github.com/repos/'+username+'/'+repo+'/commits')
+    #         commits_json = json.loads(r.text)
+    #         count=0
+    #         if 'message' not in commits_json:
+    #             for i in commits_json:
+    #                 datetime = i['commit']['committer']['date']
+    #                 date = datetime[:-1].split('T')[0]
+    #                 if not commits:
+    #                     commits.append(date)
+    #                     count+=1
+    #                 elif commits[-1] == date:
+    #                     count+=1
+    #                 else:
+    #                     commits.append(date)
+    #                     counts.append(count)
+    #                     count=1
+    #             counts.append(count)
 
-            commit_data.append(commits)
-            count_data.append(counts)
+    #         commit_data.append(commits)
+    #         count_data.append(counts)
             
-        print(repos, commit_data,end='\n\n')
+    #     print(repos, commit_data,end='\n\n')
         
-        graph = {'username':username,'repo_data':json.dumps(repos), "commit_data":json.dumps(commit_data), "count_data":json.dumps(count_data)}
-        return render(request, 'git_app/full_graph2.html', graph)
+    #     graph = {'username':username,'repo_data':json.dumps(repos), "commit_data":json.dumps(commit_data), "count_data":json.dumps(count_data)}
+    #     return render(request, 'git_app/full_graph2.html', graph)
 
 
 class new_repopage(TemplateView):
     commit_data = []
     count_data = []
+    headers = {'Authorization': 'token 77cf97b1abc61ed684eb0cc92b7052c89b516d67titu'}
 
     def commiter(self, repo):
         
         commits=[]
         counts = []
-
-        r = requests.get('https://api.github.com/repos/'+self.username+'/'+repo+'/commits')
+    
+        r = requests.get('https://api.github.com/repos/'+self.username+'/'+repo+'/commits', headers = self.headers)
         commits_json = json.loads(r.text)
         count=0
         if 'message' not in commits_json:
@@ -169,7 +172,7 @@ class new_repopage(TemplateView):
     # def new_repopage(request, username=None):
     def get(self, request, username=None):
         self.username = username
-        r = requests.get('https://api.github.com/users/'+self.username+'/repos')
+        r = requests.get('https://api.github.com/users/'+self.username+'/repos', headers = self.headers)
 
         if r.status_code == 404:   
             print("No such user")

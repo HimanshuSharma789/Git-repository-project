@@ -41,10 +41,12 @@
 			
 			function makeSearch() {
 
-				var repos = {{repo_data|safe}};
-				var commits = {{commit_data|safe}};     
-				var counts = {{count_data|safe}};
-	
+				console.log("Working");
+				var username = sessionStorage.getItem('username');
+				var repos = JSON.parse(sessionStorage.getItem('repo_data'));
+				var commits = JSON.parse(sessionStorage.getItem('commit_data'));
+				var counts = JSON.parse(sessionStorage.getItem('count_data'));
+		
 				var startDate = document.getElementById("start").value;
 				var endDate = document.getElementById("end").value;
 
@@ -166,7 +168,7 @@
 							<h1 class="text-white">
 								<span>Dashboard:</span> User git commits
 							</h1>	
-							<form action="#down" class="serach-form-area" method="POST" onsubmit="return makeSearch();">
+							<form  class="serach-form-area" onsubmit="return makeSearch();">
 									{% csrf_token %}
 								<div class="row justify-content-center form-wrap">
 									<div class="col-lg-1" style="margin-top: 10px;">

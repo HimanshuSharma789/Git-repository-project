@@ -16,31 +16,33 @@
 		<meta charset="UTF-8">
 		<!-- Site Title -->
 		<title>Repo Graph</title>
-		<script type="text/javascript" src="{% static 'js/canvasjs.min.js' %}"></script>  
-
 		
+		
+		<script type="text/javascript" src="{% static 'js/canvasjs.min.js' %}"></script>  
+		<script src="{% static 'js/jquery-2.2.4.min.js' %}"></script>
+		<script src="{% static 'js/maingraph.js' %}"></script>	
+		
+
 		<script>
+			// set today date to second date filed in the form when window loads set the link to the user github page
 		 	window.onload = function () {
-				console.log("nooooo")
 				var today = new Date();
-				// console.log("hello");
 				today = today.getFullYear() + '-' + ('0' + (today.getMonth() + 1)).slice(-2) + '-' + ('0' + today.getDate()).slice(-2);
 				document.getElementById("end").value = today;
-
+				// set the link to the user github page
+				var username = sessionStorage.getItem('username');
+				document.getElementById('github_url').href = "https://github.com/"+username;
 			}
 		</script>
+		
+		<!-- ============= initiate chart rendering on given data ================ -->
 		<script>
-
-			
 			function makeSearch() {
 
-				console.log("Working");
-				var username = sessionStorage.getItem('username');
 				var repos = JSON.parse(sessionStorage.getItem('repo_data'));
 				var commits = JSON.parse(sessionStorage.getItem('commit_data'));
 				var counts = JSON.parse(sessionStorage.getItem('count_data'));
 		
-				document.getElementById('github_url').href = "https://github.com/"+username;
 
 				var startDate = document.getElementById("start").value;
 				var endDate = document.getElementById("end").value;
@@ -138,18 +140,19 @@
 				return false;
 			}
 		</script>
+		<!-- =========chart rendering finished========= -->
 
 
 
-
-		<link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet"> 
-			
+		<!-- ====================================     CSS      ========================================= -->
+			<link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet"> 
 			<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
 			<link rel="stylesheet" href="{% static 'css/maingraph.css' %}">
-		</head>
-		<body>
+		<!-- ====================================     CSS      ========================================= -->
 
-			 
+
+		</head>
+		<body>	 
 
 			<!-- start banner Area -->
 			<section class="banner-area relative" id="home">	
@@ -281,8 +284,6 @@
 			</footer>
 			<!-- End footer Area -->		
 
-			<script src="{% static 'js/jquery-2.2.4.min.js' %}"></script>
-			<script src="{% static 'js/maingraph.js' %}"></script>	
 		</body>
 	</html>
 

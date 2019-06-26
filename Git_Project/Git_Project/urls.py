@@ -18,11 +18,11 @@ from django.urls import path
 from django.conf.urls import url, include
 from git_app import views
 
+# maintain the track of url with associated views-call
 urlpatterns = [
-    path('', views.userpage.as_view(), name='index'),
-    path('admin/', admin.site.urls),
-    path('user_graph/<str:username>', views.new_repopage.as_view(), name='new_repopage'),
-    path('userlist/', views.userlistpage.as_view(), name='userlistpage'),
-    path('fullgraph/', views.fullgraph.as_view(), name='fullgraph'),
+    path('', views.userpage.as_view(), name='index'),               # move to userpage when user comes to main url
+    path('admin/', admin.site.urls),                                # admin page
+    path('user_graph/<str:username>', views.new_repopage.as_view(), name='new_repopage'),       # dashboard page with username as argument
+    path('fullgraph/', views.fullgraph.as_view(), name='fullgraph'),                            # fullgraph page
     
 ]

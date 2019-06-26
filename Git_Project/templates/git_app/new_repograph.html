@@ -3,27 +3,32 @@
 <html lang="en">
 
 <head>
-  <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Repositories</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    
-  <div class="container-scroller">
+	<div class="container-scroller">
+	
+	<div class="navbar-menu-wrapper d-flex align-items-stretch">
+		<button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+			<img src="{% static 'images/dashboard/menu.png' %}">
+		</button>
+	</div>
+
     <div class="container-fluid page-body-wrapper">
-      <!-- partial:partials/_sidebar.html -->
-      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+      <nav  id="sidebar" class="sidebar sidebar-offcanvas">	
         <ul class="nav">
           <li class="nav-item nav-profile">
             <a href="#" class="nav-link">
               <div class="nav-profile-image">
+				<!-- adding user github image -->
                 <img src="{{ avatar_url }}" alt="profile">
               </div>
               <div class="nav-profile-text d-flex flex-column">
+				<!-- user github username -->
                 <span class="font-weight-bold">{{username}}</span>
-                
               </div>
             </a>
             <li><hr></li>
@@ -34,6 +39,8 @@
 			  <img src="{% static 'images/dashboard/dashboard.png' %}" class="mdi menu-icon" style="margin-left: auto">
             </a>
 		  </li>
+		  <!-- generating the list of all the repo on the sidebar -->
+		  <!-- enclosing the <li> tag under for loop creates multiple sections -->
 		    {% if repo_data %}    
 				{% for repo in repo_data %}
 				<li class="nav-item">
@@ -48,6 +55,7 @@
           <li class="nav-item sidebar-actions">
 			  <hr>
             <span class="nav-link"> 
+				<!-- link to the fullgraph page -->
 				<a href="{% url 'fullgraph' %}" class="btn btn-block btn-lg btn-gradient-primary mt-4">Detailed Statistics</a>
             </span>
           </li>
@@ -61,10 +69,9 @@
               <span class="page-title-icon bg-gradient-primary text-white mr-2">
 				<img src="{% static 'images/dashboard/home.png' %}" class="mdi" style="padding-top: 10px;">
 			</span>
-			HI USER
+			HI {{username}}
             </h3>
           </div>
-          
           <div class="row" style="margin-top: 50px;">
             <div class="col-md-4  grid-margin">
               <div class="card bg-gradient-danger card-img-holder text-white">
@@ -72,7 +79,8 @@
                   <img src="{% static 'images/dashboard/circle.svg' %}" class="card-img-absolute" alt="circle-image"/>
                   <h4 class="font-weight-normal mb-3">Total Commits
                     <img src="{% static 'images/dashboard/timeline.png' %}" class="mdi mdi-24px float-right">
-                  </h4>
+				  </h4>
+				  <!-- here the total commit is displayed -->
                   <h2 class="mb-5" id="total_commits"></h2>
                 </div>
               </div>
@@ -82,34 +90,38 @@
                     <img src="{% static 'images/dashboard/circle.svg' %}" class="card-img-absolute" alt="circle-image"/>                  
                     <h4 class="font-weight-normal mb-3">Days Commited
                       <img src="{% static 'images/dashboard/today.png' %}" class="mdi mdi-24px float-right">
-                    </h4>
+					</h4>
+					<!-- here the commit days is displayed -->
                     <h2 class="mb-5" id="days_commited"></h2>
                   </div>
               </div>
             </div>
-          
-          
             <div class="col-md-8 grid-margin stretch-card">
               <div class="card">
                 <div class="chart-body">
-				  <div id="chartContainer1" style="width: 100%;"></div>
+				  <div id="chartContainer1" style="width: 100%; height: 370px;"></div>
                 </div>
               </div>
     	    </div>
-           
           </div>
-          
-        <!-- partial -->
         </div>
-      <!-- main-panel ends -->
       </div>
-    <!-- page-body-wrapper ends -->
     </div>
   </div>
-  <!-- container-scroller -->
 
+
+
+  <!-- ================================================================================================ -->
+  <!-- JAVASCRIPTS   STARTS -->
+  <!-- ================================================================================================ -->
+
+  <script src="{% static 'js/vendor.bundle.base.js' %}"></script>
+  <script src="{% static 'js/off-canvas.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/canvasjs.min.js' %}"></script>  
   
+
+  <!-- ........................................................ -->
+  <!-- generating dashboard result (graph) -->
   <script>
 		function show_dashboard() {
 
@@ -122,9 +134,7 @@
 		sessionStorage.setItem('repo_data', JSON.stringify({{repo_data | safe}}));
 		sessionStorage.setItem('commit_data', JSON.stringify({{commit_data | safe}}));
 		sessionStorage.setItem('count_data', JSON.stringify({{count_data | safe}}));
-		
 
-		console.log(commits);
 
 		var totalcommits = 0;
 		var commit_day_count = 0;
@@ -148,7 +158,6 @@
 				dp.push({ x: new Date(date[0], date[1]-1, date[2]), y: commit_count});
 				totalcommits = totalcommits + commit_count;
 			}
-			console.log(dp);
 			var seriesData = {
 				name: repos[i], 
 				showInLegend: true,
@@ -184,12 +193,14 @@
 		document.getElementById("days_commited").innerHTML = commit_day_count;
 
 	}
-
 	window.onload = show_dashboard;
 	document.getElementById("dashboard").onclick = show_dashboard;
 </script>
 
 
+
+<!-- ........................................................ -->
+<!-- generating graph for each repo on click -->
 <script>
 	function simulate(id) {
 		var i = id;
@@ -213,11 +224,10 @@
 				{dict.push(commit_date);}
 			else 
 				{commit_day_count = commit_day_count + 1;}
-			console.log(commit_count);
+
 			dp.push({ x: new Date(date[0], date[1]-1, date[2]), y: commit_count});
 			totalcommits = totalcommits + commit_count;
 		}
-		console.log(dp);
 	
 		var chart = new CanvasJS.Chart("chartContainer1", {
 			animationEnabled: true,
@@ -248,6 +258,10 @@
 
 	}
 </script>
+
+<!-- ================================================================================================ -->
+<!-- JAVASCRIPTS   ENDS -->
+<!-- ================================================================================================ -->
 
 </body>
 

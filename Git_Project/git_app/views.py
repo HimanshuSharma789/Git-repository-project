@@ -36,10 +36,12 @@ class fullgraph(TemplateView):
 class new_repopage(TemplateView):
     commit_data = []
     count_data = []
-    headers = {'Authorization': 'token   <<<your key here>>>  '}
+    headers = {'Authorization': 'token <<your key here>> '}
 
     def commiter(self, repo):
-        
+        self.commit_data = []
+        self.count_data = []
+
         commits=[]
         counts = []
     

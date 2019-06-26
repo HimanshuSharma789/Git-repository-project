@@ -14,4 +14,6 @@
 - Visualize Github user commit history.
 - Visualize Commit History per repository as well as total commit. 
 
+### Preview
+![](https://i.ibb.co/Fgd8N9T/Annotation-2019-06-26-225447.jpg)
 ### End

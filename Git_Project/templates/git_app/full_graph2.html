@@ -18,13 +18,6 @@
 		<title>Repo Graph</title>
 		<script type="text/javascript" src="{% static 'js/canvasjs.min.js' %}"></script>  
 
-		<!-- <script>
-			console.log(sessionStorage.getItem('username'));
-			console.log(sessionStorage.getItem('repo_data'));
-			console.log(sessionStorage.getItem('commit_data'));
-			console.log(sessionStorage.getItem('count_data'));
-		</script> -->
-			
 		
 		<script>
 		 	window.onload = function () {
@@ -47,6 +40,8 @@
 				var commits = JSON.parse(sessionStorage.getItem('commit_data'));
 				var counts = JSON.parse(sessionStorage.getItem('count_data'));
 		
+				document.getElementById('github_url').href = "https://github.com/"+username;
+
 				var startDate = document.getElementById("start").value;
 				var endDate = document.getElementById("end").value;
 
@@ -71,9 +66,7 @@
 							else 
 								{dict[commit_date] = counts[i][j];}
 								commit_day_count = commit_day_count + 1;
-							// add new datapoints for each repository in proper date format
-							// chart.data[i].addTo("dataPoints", { x: new Date(d[0], d[1]-1, d[2]), y: commit_count });
-
+							
 							dp.push({ x: new Date(date[0], date[1]-1, date[2]), y: commit_count});
 							totalcommits = totalcommits + commit_count;
 						}
@@ -97,6 +90,9 @@
 					theme: "light1",
 					title:{
 						text: "Commits per repository"
+					},
+					axisX:{
+						valueFormatString: "DD MMM YY"
 					},
 					axisY:{
 						includeZero: false
@@ -139,7 +135,6 @@
 				document.getElementById("total_commits").innerHTML = totalcommits;
         		document.getElementById("days_commited").innerHTML = commit_day_count;
 
-
 				return false;
 			}
 		</script>
@@ -148,10 +143,7 @@
 
 
 		<link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet"> 
-			<!--
-			CSS
-			============================================= -->
-			<link rel="stylesheet" href="{% static 'css/linearicons.css' %}">	
+			
 			<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
 			<link rel="stylesheet" href="{% static 'css/maingraph.css' %}">
 		</head>
@@ -269,7 +261,7 @@
 							<div class="title text-center">
 								<h1 class="mb-10">Statistical analysis of user github repo</h1>
 								<p style="color: #7b7b7b;">Review your github activity and keep it upto date... </p>
-								<a class="primary-btn" href="https://github.com/{{username}}" target="_blank">MOVE TO GITHUB REPO</a>
+								<a class="primary-btn" href="" target="_blank" id="github_url">MOVE TO GITHUB REPO</a>
 								<!-- <a class="primary-btn" href="#">Request Free Demo</a> -->
 							</div>
 						</div>

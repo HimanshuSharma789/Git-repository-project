@@ -19,12 +19,10 @@ from django.conf.urls import url, include
 from git_app import views
 
 urlpatterns = [
-    path('', views.userpage, name='index'),
+    path('', views.userpage.as_view(), name='index'),
     path('admin/', admin.site.urls),
-    path('user/<str:username>', views.repopage, name='repopage'),
     path('user_graph/<str:username>', views.new_repopage.as_view(), name='new_repopage'),
-    path('userlist/', views.userlistpage, name='userlistpage'),
+    path('userlist/', views.userlistpage.as_view(), name='userlistpage'),
     path('fullgraph/', views.fullgraph.as_view(), name='fullgraph'),
-    path('graph/<str:username>/<str:repo>', views.graphpage, name='graphpage'),
-
+    
 ]
